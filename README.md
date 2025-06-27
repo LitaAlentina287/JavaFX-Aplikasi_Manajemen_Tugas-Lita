@@ -17,7 +17,7 @@ Aplikasi ini dibuat menggunakan JavaFX sebagai bagian dari tugas mata kuliah PBO
 
 ## 📽️ Demo Aplikasi
 Tonton demo aplikasi di YouTube:  
-🔗 [https://www.youtube.com/watch?v=MASUKKAN_LINK_KAMU_DI_SINI](https://youtu.be/klz2-AVIM1Q?si=6h_i4sEySB_GH3p2)
+🔗 (https://youtu.be/klz2-AVIM1Q?si=6h_i4sEySB_GH3p2)
 
 
 ## 👩‍💻 Pengembang
