@@ -1,7 +1,7 @@
-com\mycompany\helloworldtodo\TodoView$1.class
+com\mycompany\todoapp\TodoView$1.class
+com\mycompany\todoapp\Todo.class
 module-info.class
-com\mycompany\helloworldtodo\TodoOperations.class
+com\mycompany\todoapp\TodoOperations.class
 com\mycompany\todoapp\DatabaseConnection.class
-com\mycompany\helloworldtodo\App.class
-com\mycompany\helloworldtodo\Todo.class
-com\mycompany\helloworldtodo\TodoView.class
+com\mycompany\todoapp\App.class
+com\mycompany\todoapp\TodoView.class

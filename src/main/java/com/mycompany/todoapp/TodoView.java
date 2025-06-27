@@ -1,4 +1,4 @@
-package com.mycompany.helloworldtodo;
+package com.mycompany.todoapp;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

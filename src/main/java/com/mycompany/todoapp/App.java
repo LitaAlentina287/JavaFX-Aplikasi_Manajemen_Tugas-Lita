@@ -1,4 +1,4 @@
-package com.mycompany.helloworldtodo;
+package com.mycompany.todoapp;
 
 import javafx.application.Application;
 import javafx.scene.Scene;

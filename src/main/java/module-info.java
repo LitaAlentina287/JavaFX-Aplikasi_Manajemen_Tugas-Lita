@@ -1,8 +1,8 @@
-module com.mycompany.helloworldtodo {
+module com.mycompany.todoapp {
     requires javafx.controls;
     requires javafx.fxml;
     requires java.sql;
 
-    opens com.mycompany.helloworldtodo to javafx.fxml;
-    exports com.mycompany.helloworldtodo;
+    opens com.mycompany.todoapp to javafx.fxml;
+    exports com.mycompany.todoapp;
 }
