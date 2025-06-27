@@ -30,26 +30,33 @@ Tonton demo aplikasi di YouTube:
 
 ### 📁 File: App.java
 ```java
-package com.mycompany.helloworldtodo;
+package com.mycompany.todoapp;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
+
 /**
  * JavaFX App
  */
 public class App extends Application {
+
     @Override
     public void start(Stage primaryStage) {
         try {
+            // Inisialisasi Root Layout
             BorderPane root = new BorderPane();
+
+            // Tambahkan Tampilan TodoView
             TodoView todoView = new TodoView();
             root.setCenter(todoView.getView());
 
+            // Buat Scene
             Scene scene = new Scene(root, 800, 600);
 
+            // Atur Stage
             primaryStage.setTitle("To-Do Manager");
             primaryStage.setScene(scene);
             primaryStage.show();
@@ -61,6 +68,7 @@ public class App extends Application {
     public static void main(String[] args) {
         launch(args);
     }
+
 }
 ```
 
@@ -133,16 +141,45 @@ public class Todo {
         this.createdAt = new SimpleStringProperty(createdAt);
     }
 
-    public int getId() { return id.get(); }
-    public IntegerProperty idProperty() { return id; }
-    public String getTitle() { return title.get(); }
-    public StringProperty titleProperty() { return title; }
-    public String getDescription() { return description.get(); }
-    public StringProperty descriptionProperty() { return description; }
-    public boolean isIsCompleted() { return isCompleted.get(); }
-    public BooleanProperty isCompletedProperty() { return isCompleted; }
-    public String getCreatedAt() { return createdAt.get(); }
-    public StringProperty createdAtProperty() { return createdAt; }
+    public int getId() {
+        return id.get();
+    }
+
+    public IntegerProperty idProperty() {
+        return id;
+    }
+
+    public String getTitle() {
+        return title.get();
+    }
+
+    public StringProperty titleProperty() {
+        return title;
+    }
+
+    public String getDescription() {
+        return description.get();
+    }
+
+    public StringProperty descriptionProperty() {
+        return description;
+    }
+
+    public boolean isIsCompleted() {
+        return isCompleted.get();
+    }
+
+    public BooleanProperty isCompletedProperty() {
+        return isCompleted;
+    }
+
+    public String getCreatedAt() {
+        return createdAt.get();
+    }
+
+    public StringProperty createdAtProperty() {
+        return createdAt;
+    }
 }
 ```
 
@@ -150,6 +187,7 @@ public class Todo {
 ```java
 package com.mycompany.todoapp;
 
+import com.mycompany.todoapp.DatabaseConnection;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -161,6 +199,7 @@ public class TodoOperations {
         connection = DatabaseConnection.getConnection();
     }
 
+    // Create
     public void addTodo(Todo todo) {
         String query = "INSERT INTO todos (title, description) VALUES (?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
@@ -173,17 +212,20 @@ public class TodoOperations {
         }
     }
 
+    // Read
     public List<Todo> getTodos() {
         List<Todo> todos = new ArrayList<>();
         String query = "SELECT * FROM todos";
-        try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(query)) {
+        try (Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+
             while (rs.next()) {
                 todos.add(new Todo(
-                    rs.getInt("id"),
-                    rs.getString("title"),
-                    rs.getString("description"),
-                    rs.getBoolean("is_completed"),
-                    rs.getString("created_at")
+                        rs.getInt("id"),
+                        rs.getString("title"),
+                        rs.getString("description"),
+                        rs.getBoolean("is_completed"),
+                        rs.getString("created_at")
                 ));
             }
         } catch (SQLException e) {
@@ -192,6 +234,7 @@ public class TodoOperations {
         return todos;
     }
 
+    // Update
     public void updateTodo(int id, String newTitle, String newDescription) {
         String query = "UPDATE todos SET title = ?, description = ? WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
@@ -205,6 +248,7 @@ public class TodoOperations {
         }
     }
 
+    // Delete
     public void deleteTodo(int id) {
         String query = "DELETE FROM todos WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
@@ -216,6 +260,7 @@ public class TodoOperations {
         }
     }
 
+    // Mark as Completed
     public void markAsCompleted(int id) {
         String query = "UPDATE todos SET is_completed = TRUE WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
@@ -230,7 +275,177 @@ public class TodoOperations {
 ```
 
 ### 📁 File: TodoView.java
-(Paste lengkap di bagian selanjutnya karena terlalu panjang untuk satu sel)
+```sql
+package com.mycompany.todoapp;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+
+import java.sql.SQLException;
+
+public class TodoView {
+    private TodoOperations todoOperations;
+    private TableView<Todo> tableView;
+    private ObservableList<Todo> todoList;
+
+    public TodoView() {
+        try {
+            todoOperations = new TodoOperations();
+            todoList = FXCollections.observableArrayList(todoOperations.getTodos());
+        } catch (SQLException e) {
+            e.printStackTrace();
+            showError("Error loading todos: " + e.getMessage());
+        }
+    }
+
+    public VBox getView() {
+        VBox root = new VBox(10);
+        root.setPadding(new Insets(10));
+
+        // ======== Tambahkan Judul di Tengah =========
+        Label titleLabel = new Label("✨ Aplikasi Manajemen To-Do - Lita ✨");
+        titleLabel.setStyle("-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #333366;");
+        titleLabel.setMaxWidth(Double.MAX_VALUE);
+        titleLabel.setAlignment(Pos.CENTER);
+
+        // Buat HBox supaya lebih teratur, jika mau
+        HBox titleContainer = new HBox();
+        titleContainer.setAlignment(Pos.CENTER);
+        titleContainer.getChildren().add(titleLabel);
+
+        // =============================================
+
+        // TableView
+        tableView = new TableView<>();
+        tableView.setItems(todoList);
+
+        // Kolom
+        TableColumn<Todo, Integer> idColumn = new TableColumn<>("ID");
+        idColumn.setCellValueFactory(data -> data.getValue().idProperty().asObject());
+
+        TableColumn<Todo, String> titleColumn = new TableColumn<>("Judul");
+        titleColumn.setCellValueFactory(data -> data.getValue().titleProperty());
+
+        TableColumn<Todo, String> descriptionColumn = new TableColumn<>("Deskripsi");
+        descriptionColumn.setCellValueFactory(data -> data.getValue().descriptionProperty());
+
+        TableColumn<Todo, Boolean> isCompletedColumn = new TableColumn<>("Selesai");
+        isCompletedColumn.setCellValueFactory(data -> data.getValue().isCompletedProperty());
+
+        TableColumn<Todo, Void> actionColumn = new TableColumn<>("Aksi");
+        actionColumn.setCellFactory(param -> new TableCell<>() {
+            private Button editButton = new Button("✏️ Ubah");
+            private Button deleteButton = new Button("🗑️ Hapus");
+            private Button markCompletedButton = new Button("✅ Selesai");
+
+            {
+                editButton.setStyle("-fx-background-color: #f9c74f; -fx-text-fill: black;");
+                deleteButton.setStyle("-fx-background-color: #f94144; -fx-text-fill: white;");
+                markCompletedButton.setStyle("-fx-background-color: #90be6d; -fx-text-fill: white;");
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    editButton.setOnAction(event -> {
+                        Todo selected = getTableView().getItems().get(getIndex());
+                        showTodoModal(selected);
+                    });
+
+                    deleteButton.setOnAction(event -> {
+                        Todo selected = getTableView().getItems().get(getIndex());
+                        todoOperations.deleteTodo(selected.getId());
+                        refreshTable();
+                        showSuccess("Todo berhasil dihapus!");
+                    });
+
+                    markCompletedButton.setOnAction(event -> {
+                        Todo selected = getTableView().getItems().get(getIndex());
+                        todoOperations.markAsCompleted(selected.getId());
+                        refreshTable();
+                        showSuccess("Tugas ditandai selesai!");
+                    });
+
+                    HBox buttonContainer = new HBox(5);
+                    buttonContainer.getChildren().addAll(editButton, deleteButton, markCompletedButton);
+                    setGraphic(buttonContainer);
+                }
+            }
+        });
+
+        tableView.getColumns().addAll(idColumn, titleColumn, descriptionColumn, isCompletedColumn, actionColumn);
+
+        // Tombol Tambah
+        Button addButton = new Button("➕ Tambah Tugas Baru");
+        addButton.setStyle("-fx-background-color: #577590; -fx-text-fill: white;");
+        addButton.setOnAction(e -> showTodoModal(null));
+
+        root.getChildren().addAll(titleContainer, addButton, tableView);
+        return root;
+    }
+
+    private void showTodoModal(Todo todo) {
+        Stage modalStage = new Stage();
+        modalStage.initModality(Modality.APPLICATION_MODAL);
+        modalStage.setTitle(todo == null ? "Tambah Tugas" : "Ubah Tugas");
+
+        TextField titleField = new TextField(todo == null ? "" : todo.getTitle());
+        TextField descriptionField = new TextField(todo == null ? "" : todo.getDescription());
+
+        Button saveButton = new Button(todo == null ? "Tambah" : "Simpan");
+        saveButton.setStyle("-fx-background-color: #43aa8b; -fx-text-fill: white;");
+        saveButton.setOnAction(e -> {
+            if (todo == null) {
+                todoOperations.addTodo(new Todo(0, titleField.getText(), descriptionField.getText(), false, null));
+                showSuccess("Tugas berhasil ditambahkan!");
+            } else {
+                todoOperations.updateTodo(todo.getId(), titleField.getText(), descriptionField.getText());
+                showSuccess("Tugas berhasil diupdate!");
+            }
+            refreshTable();
+            modalStage.close();
+        });
+
+        VBox modalContent = new VBox(10);
+        modalContent.setPadding(new Insets(10));
+        modalContent.getChildren().addAll(new Label("Judul:"), titleField, new Label("Deskripsi:"), descriptionField, saveButton);
+
+        Scene modalScene = new Scene(modalContent);
+        modalStage.setScene(modalScene);
+        modalStage.showAndWait();
+    }
+
+    private void refreshTable() {
+        todoList.setAll(todoOperations.getTodos());
+    }
+
+    private void showSuccess(String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Sukses");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+    private void showError(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+}
+```
 
 ---
 
