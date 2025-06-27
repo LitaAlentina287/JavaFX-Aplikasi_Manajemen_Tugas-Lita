@@ -1,6 +1,6 @@
 # 📋 JavaFX - Aplikasi Manajemen Tugas
 
-Aplikasi ini dibuat menggunakan JavaFX sebagai bagian dari tugas mata kuliah. Tujuannya adalah untuk membantu pengguna dalam mencatat, mengelola, dan menyelesaikan tugas harian mereka dengan antarmuka yang sederhana dan interaktif.
+Aplikasi ini dibuat menggunakan JavaFX sebagai bagian dari tugas mata kuliah PBO2. Tujuannya adalah untuk membantu pengguna dalam mencatat, mengelola, dan menyelesaikan tugas harian mereka dengan antarmuka yang sederhana dan interaktif.
 
 ## ✨ Fitur Utama
 - Tambah tugas baru
