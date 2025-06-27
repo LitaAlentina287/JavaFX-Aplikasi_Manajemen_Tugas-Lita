@@ -6,14 +6,14 @@ Aplikasi ini dibuat menggunakan JavaFX sebagai bagian dari tugas mata kuliah PBO
 - Tambah tugas baru
 - Hapus dan edit tugas
 - Tandai tugas yang sudah selesai
-- Antarmuka menggunakan JavaFX (FXML)
+- Antarmuka menggunakan JavaFX
 
 ## 💻 Teknologi yang Digunakan
 - Java
 - JavaFX
-- Scene Builder
-- Apache NetBeans IDE
+- Apache NetBeans IDE (versi 23)
 - Git & GitHub
+- MySQL (Laragon) untuk penyimpanan data
 
 ## 📽️ Demo Aplikasi
 Tonton demo aplikasi di YouTube:  
